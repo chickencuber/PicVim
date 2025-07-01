@@ -62,7 +62,7 @@ function Image:draw(x, y, w, h)
 	self.properties.h = h
 	self:pngify()
 	self:rescale()
-	local file = io.open(shell_quote(self.filepath), "rb")
+	local file = io.open(vim.fn.expand(self.filepath), "rb")
 	if not file then
 		print("Error: Could not open file.")
 		return
