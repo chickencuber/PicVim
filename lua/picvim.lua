@@ -12,6 +12,10 @@ if not uv then
 	uv = vim.loop
 end
 
+local function shell_quote(str)
+	return "'" .. str:gsub("'", "'\\''") .. "'"
+end
+
 -- Lines 15-37 from http://lua-users.org/wiki/BaseSixtyFour
 local ba = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 local function enc(data)
@@ -58,7 +62,7 @@ function Image:draw(x, y, w, h)
 	self.properties.h = h
 	self:pngify()
 	self:rescale()
-	local file = io.open(self.filepath, "rb")
+	local file = io.open(shell_quote(self.filepath), "rb")
 	if not file then
 		print("Error: Could not open file.")
 		return
@@ -106,9 +110,9 @@ function Image:rescale()
 	local o_x_str = o_x >= 0 and "+" .. o_x or tostring(o_x)
 	local o_y_str = o_y >= 0 and "+" .. o_y or tostring(o_y)
 	local r_w, r_h = w * self.properties.zoom * 10, h * self.properties.zoom * 23
-	local cmd = "magick \""
-		.. self.filepath
-		.. "\" -resize "
+	local cmd = "magick "
+		.. shell_quote(self.filepath)
+		.. " -resize "
 		.. r_w
 		.. "x"
 		.. r_h
@@ -122,7 +126,7 @@ function Image:rescale()
 		.. o_x_str
 		.. o_y_str
 		.. " "
-		.. temp_file
+		.. shell_quote(temp_file)
 	local result = vim.fn.system(cmd)
 	if vim.v.shell_error == 0 then
 		self.filepath = temp_file
@@ -141,9 +145,9 @@ function Image:pngify()
 		return
 	end
 	if file_type == "gif" then
-		cmd = "magick " .. self.filepath_o .. "[0] " .. temp_file
+		cmd = "magick " .. shell_quote(self.filepath_o) .. "[0] " .. shell_quote(temp_file)
 	else
-		cmd = "magick " .. self.filepath_o .. " " .. temp_file
+		cmd = "magick " .. shell_quote(self.filepath_o) .. " " .. shell_quote(temp_file)
 	end
 	local result = vim.fn.system(cmd)
 	if vim.v.shell_error == 0 then
