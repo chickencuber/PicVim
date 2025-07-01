@@ -107,7 +107,7 @@ function Image:rescale()
 	local o_y_str = o_y >= 0 and "+" .. o_y or tostring(o_y)
 	local r_w, r_h = w * self.properties.zoom * 10, h * self.properties.zoom * 23
 	local cmd = "magick "
-		.. vim.fn.expand(self.filepath)
+		.. self.filepath
 		.. " -resize "
 		.. r_w
 		.. "x"
@@ -134,16 +134,16 @@ end
 
 function Image:pngify()
 	local temp_file = "/tmp/pngify" .. self.id .. ".png"
-	local file_type = vim.fn.fnamemodify(vim.fn.expand(self.filepath_o), ":e")
+	local file_type = vim.fn.fnamemodify(self.filepath_o, ":e")
 	local cmd
 	if file_type == "png" then
-		self.filepath = vim.fn.expand(self.filepath_o)
+		self.filepath = self.filepath_o
 		return
 	end
 	if file_type == "gif" then
-		cmd = "magick " .. vim.fn.expand(self.filepath_o) .. "[0] " .. temp_file
+		cmd = "magick " .. self.filepath_o .. "[0] " .. temp_file
 	else
-		cmd = "magick " .. vim.fn.expand(self.filepath_o) .. " " .. temp_file
+		cmd = "magick " .. self.filepath_o .. " " .. temp_file
 	end
 	local result = vim.fn.system(cmd)
 	if vim.v.shell_error == 0 then
