@@ -106,9 +106,9 @@ function Image:rescale()
 	local o_x_str = o_x >= 0 and "+" .. o_x or tostring(o_x)
 	local o_y_str = o_y >= 0 and "+" .. o_y or tostring(o_y)
 	local r_w, r_h = w * self.properties.zoom * 10, h * self.properties.zoom * 23
-	local cmd = "magick "
+	local cmd = "magick \""
 		.. self.filepath
-		.. " -resize "
+		.. "\" -resize "
 		.. r_w
 		.. "x"
 		.. r_h
